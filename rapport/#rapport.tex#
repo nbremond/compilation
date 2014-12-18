@@ -1,0 +1,206 @@
+\documentclass[a4paper,10pt]{report}
+
+%\usepackage{ gensymb }
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[vlined, lined, linesnumbered, boxruled, french]{algorithm2e}
+\usepackage{xcolor,amsmath,amssymb}
+\usepackage[babel=true]{csquotes}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\pagestyle{fancy}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage{fancyvrb}
+%%%%%%%%%%%%%%%% Lengths %%%%%%%%%%%%%%%%
+\setlength{\textwidth}{15.5cm}
+\setlength{\evensidemargin}{0.5cm}
+\setlength{\oddsidemargin}{0.5cm}
+
+\setlength{\voffset}{-.7in}
+\setlength{\hoffset}{-.1in}
+\setlength{\textheight}{24.7cm}
+
+\renewcommand*\thesection{\arabic{section}} 
+%%%%%%%%%%%%%%%% Variables %%%%%%%%%%%%%%%%
+% \def\projet{7}
+\def\titre{Projet de Compilation}
+%\def\groupe{3}
+\def\others{Nicolas Bremond, Lotfi Zouad, Valentin Darricau, Nicolas Richard}
+\newtheorem{preuve}{\textit{Preuve }}
+\begin{document}
+\fancyhfoffset{0cm}{}
+%%%%%%%%%%%%%%%% Header and footer %%%%%%%%%%%%%%%%
+\noindent\begin{minipage}{0.98\textwidth}
+  \vskip 0mm
+  \noindent
+  { \begin{tabular}{p{4.5cm}}
+      \centering \bfseries
+      {\itshape \titre} \\
+      % {\sffamily Projet n\degree \projet}         
+    \end{tabular}}
+  \hfill 
+  \fbox{\begin{tabular}{l}
+      {~\hfill \bfseries \sffamily Groupe %\groupe\ %- \'Equipe \equipe
+        \hfill~} \\[2mm] 
+      % Coordinateur : \responsible \\
+      Codeurs : \others
+    \end{tabular}}
+  \vskip 4mm ~ 
+
+  
+  \vskip 1mm
+\end{minipage}
+
+\lhead{ \titre}
+\chead{}
+\rhead{\others}
+
+\lfoot{ENSEIRB-MATMECA}
+\cfoot{}
+\rfoot{Semestre 7 2014-2015}
+
+%%%%%%%%%%%%%%%% Main part %%%%%%%%%%%%%%%%
+
+\section{Choix de l'extension}
+
+Nous avons choisis l'extension <<Vérification statique et dynamique du
+code>>. Cette extension permettra de vérifier les dépassements de
+tableaux et la présence de <<return>> en fin de programme dans les
+fonctions qui ne retournent pas <<void>>.
+
+\section{Tests}
+
+\subsubsection{Tests pour les dépassements de tableaux}
+
+\begin{itemize}
+
+  Ces tests permettent de vérifier que le dépassement dans les
+  tableaux est bien géré par notre compilateur.\\
+  Ils vérifient avec la déclaration statique et la déclaration avec les mallocs.\\
+
+\item Test 1_1:
+\begin{Verbatim}
+  float a[100];
+  a[-1] = 0; 
+\end{Verbatim}
+
+\item Test 1_2:
+\begin{Verbatim}
+  float * a = malloc(sizeof(float)*100);
+  a[-1] = 0; 
+\end{Verbatim}
+
+\item Test1_3:
+\begin{Verbatim}
+  float a[100];
+  int i;
+  for (i=0; i<=100; i++) {
+    a[i] = 0;
+  }
+\end{Verbatim}
+
+\item Test 1_4:
+\begin{Verbatim}
+  float * a = malloc(sizeof(float)*100);
+  int i;
+  for (i=0; i<=100; i++) {
+    a[i] = 0;
+  }
+\end{Verbatim}
+
+Ces quatre derniers tests vérifient également les dépassements de tableau mais d'une manière différente. Ce dépassement de tableau dépend de plus d'un paramètre.
+\item Test 1_5:
+\begin{Verbatim}
+  float a[100];
+  int i;
+  for (i=0; i<=100; i++) {
+    a[i+j] = 0; \textit{//ici il n'y a pas seulement i à surveiller}
+  }
+\end{Verbatim}
+
+\item Test 1_6:
+\begin{Verbatim}
+  float a[99];
+  int i;
+  for (i=0; i<=33; i++) {
+    a[3*i] = 0;
+  }
+\end{Verbatim}
+
+
+\item Test 1_7:
+\begin{Verbatim}
+  float *a = malloc(sizeof(float)*99);
+  int i;
+  for (i=0; i<=33; i++) {
+    a[3*i] = 0;
+  }
+
+\end{Verbatim}
+
+Pour cette dernière fonction, il peut y avoir dépassement de tableau
+ou pas. Ce test ne donnera pas d'erreur de compilation.
+\item Test 1_8:
+\begin{Verbatim}
+  void fonction(int n){
+    int i = 0;
+    float a[100];
+    while(i<n){
+      a[i] = 0.2;
+      i++;
+    }
+  }
+\end{Verbatim}
+\subsubsection{Tests pour les retours de fonction}
+
+\item Test 2_1:
+\begin{Verbatim}
+  int fonction(){
+    int a = 5;
+  }
+\end{Verbatim}
+
+\item Test 2_2:
+\begin{Verbatim}
+   int fonction(){
+    float a = 5.2;
+    return a;
+  }
+\end{Verbatim}
+
+\item Test 2_3:
+\begin{Verbatim}
+  float fonction(){
+    float a = 5.2;
+    if(a<0){
+      return a;
+    }
+    else if(a>10){
+      return (a+1);
+    }
+  }
+\end{Verbatim}
+
+\item Test 2_4:
+\begin{Verbatim}
+  float fonction(int i){
+    int n = 100;
+    while (i<n){
+      if (i == 80){
+        return i;
+      }      
+      i++;
+    }
+  }
+\end{Verbatim}
+
+
+
+\end{itemize}
+\newpage
+
+\end{document}
+

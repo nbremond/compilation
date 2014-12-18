@@ -1,0 +1,19 @@
+#ifndef _TYPES_
+#define _TYPES_
+
+#define SIZE 100
+
+enum primitif {VOID_T, INT_T, FLOAT_T, PINT, PFLOAT};
+
+
+typedef struct type_t { 
+  enum primitif kind;
+  int taille;
+  int isFunction;
+  int nbParam;
+  struct type_t params[SIZE];
+} type_t;
+
+
+
+#endif
